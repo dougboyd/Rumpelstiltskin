@@ -1,45 +1,33 @@
-diff --git a/pom.xml b/pom.xml
-index a70c702..b123456 100644
---- a/pom.xml
-+++ b/pom.xml
-@@ <build>
--    <plugins>
--      <plugin>
--        <groupId>org.springframework.boot</groupId>
--        <artifactId>spring-boot-maven-plugin</artifactId>
--      </plugin>
--    </plugins>
-+    <plugins>
-+      <!-- Spring Boot repackage (builds executable JAR with deps) -->
-+      <plugin>
-+        <groupId>org.springframework.boot</groupId>
-+        <artifactId>spring-boot-maven-plugin</artifactId>
-+      </plugin>
+diff --git a/src/main/java/au/com/dougboyd/rumpelstiltskin/controller/HelloController.java b/src/main/java/au/com/dougboyd/rumpelstiltskin/controller/HelloController.java
+index ae22e40..b1c2d3f 100644
+--- a/src/main/java/au/com/dougboyd/rumpelstiltskin/controller/HelloController.java
++++ b/src/main/java/au/com/dougboyd/rumpelstiltskin/controller/HelloController.java
+@@ -1,18 +1,21 @@
+ package au.com.dougboyd.rumpelstiltskin.controller;
+
+ import org.springframework.web.bind.annotation.GetMapping;
+ import org.springframework.web.bind.annotation.RequestMapping;
+ import org.springframework.web.bind.annotation.RestController;
+
+-@RestController
+-@RequestMapping("/api")
+-public class HelloController {
+-
+-    @GetMapping("/hello")
+-    public String sayHello() {
+-        return "Hello, Rumpelstiltskin!";
+-    }
+-
+-}
++@RestController
++@RequestMapping("/api")
++public class HelloController {
 +
-+      <!-- Maven Shade Plugin for an explicit “fat JAR” -->
-+      <plugin>
-+        <groupId>org.apache.maven.plugins</groupId>
-+        <artifactId>maven-shade-plugin</artifactId>
-+        <version>3.4.1</version>
-+        <executions>
-+          <execution>
-+            <phase>package</phase>
-+            <goals>
-+              <goal>shade</goal>
-+            </goals>
-+            <configuration>
-+              <!-- attach the shaded JAR as the primary artifact -->
-+              <shadedArtifactAttached>false</shadedArtifactAttached>
-+              <!-- ensure no “-shaded” classifier; will overwrite target/*.jar -->
-+              <createDependencyReducedPom>false</createDependencyReducedPom>
-+              <transformers>
-+                <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
-+                  <!-- your main class -->
-+                  <mainClass>au.com.dougboyd.rumpelstiltskin.RumpelstiltskinApplication</mainClass>
-+                </transformer>
-+              </transformers>
-+            </configuration>
-+          </execution>
-+        </executions>
-+      </plugin>
-+    </plugins>
++    @GetMapping("/hello")
++    public String sayHello() {
++        return "Hello, Rumpelstiltskin!";
++    }
++
++}
++
++// End of HelloController.java
