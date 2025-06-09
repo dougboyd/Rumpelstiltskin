@@ -1,0 +1,144 @@
+diff --git a/.gitignore b/.gitignore
+index e69de29..a1b2c3d 100644
+--- a/.gitignore
++++ b/.gitignore
+@@ -1,4 +1,12 @@
+ /target/
++*.log
++*.class
++.idea/
++.vscode/
++*.iml
++DDS_Store
++
+ # Maven
+ /pom.xml.tag
+ /pom.xml.releaseBackup
+
+diff --git a/pom.xml b/pom.xml
+new file mode 100644
+index 0000000..d4e5f6a
+--- /dev/null
++++ b/pom.xml
+@@ -0,0 +1,41 @@
++<?xml version="1.0" encoding="UTF-8"?>
++<project xmlns="http://maven.apache.org/POM/4.0.0"
++         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
++         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
++    <modelVersion>4.0.0</modelVersion>
++
++    <parent>
++        <groupId>org.springframework.boot</groupId>
++        <artifactId>spring-boot-starter-parent</artifactId>
++        <version>3.1.4</version>
++        <relativePath/>
++    </parent>
++
++    <groupId>au.com.dougboyd</groupId>
++    <artifactId>rumpelstiltskin</artifactId>
++    <version>0.0.1-SNAPSHOT</version>
++    <name>Rumpelstiltskin</name>
++    <description>Spring Boot microservice template</description>
++
++    <properties>
++        <java.version>17</java.version>
++    </properties>
++
++    <dependencies>
++        <dependency>
++            <groupId>org.springframework.boot</groupId>
++            <artifactId>spring-boot-starter-web</artifactId>
++        </dependency>
++    </dependencies>
++
++    <build>
++        <plugins>
++            <plugin>
++                <groupId>org.springframework.boot</groupId>
++                <artifactId>spring-boot-maven-plugin</artifactId>
++            </plugin>
++        </plugins>
++    </build>
++</project>
+
+diff --git a/src/main/java/au/com/dougboyd/rumpelstiltskin/RumpelstiltskinApplication.java b/src/main/java/au/com/dougboyd/rumpelstiltskin/RumpelstiltskinApplication.java
+new file mode 100644
+index 0000000..abc1234
+--- /dev/null
++++ b/src/main/java/au/com/dougboyd/rumpelstiltskin/RumpelstiltskinApplication.java
+@@ -0,0 +1,12 @@
++package au.com.dougboyd.rumpelstiltskin;
++
++import org.springframework.boot.SpringApplication;
++import org.springframework.boot.autoconfigure.SpringBootApplication;
++
++@SpringBootApplication
++public class RumpelstiltskinApplication {
++
++    public static void main(String[] args) {
++        SpringApplication.run(RumpelstiltskinApplication.class, args);
++    }
++}
+
+diff --git a/src/main/resources/application.properties b/src/main/resources/application.properties
+new file mode 100644
+index 0000000..def5678
+--- /dev/null
++++ b/src/main/resources/application.properties
+@@ -0,0 +1,2 @@
++# Server configuration
++server.port=8080
+
+diff --git a/README.md b/README.md
+index 0000000..fedcba9 100644
+--- a/README.md
++++ b/README.md
+@@ -1,3 +1,28 @@
+-# Rumpelstiltskin
++# Rumpelstiltskin
++
++**Rumpelstiltskin** is a Spring Boot microservice template using Maven.
+
++## Prerequisites
++- Java 17 JDK  
++- Maven 3.6+
+
++## Getting Started
++1. Clone the repo and switch to DEVELOPMENT:  
++   ```bash
++   git clone git@github.com:dougboyd/Rumpelstiltskin.git
++   git checkout DEVELOPMENT
++   ```
++2. Build:  
++   ```bash
++   mvn clean package
++   ```
++3. Run locally:  
++   ```bash
++   mvn spring-boot:run
++   ```
++   The app starts on port 8080.
+
++## Project Structure
++```
++Rumpelstiltskin/
++├─ src/
++│  ├─ main/java/au/com/dougboyd/rumpelstiltskin
++│  └─ main/resources/
++├─ pom.xml
++└─ README.md
++```
+
++## Branching Model
++- **DEVELOPMENT** (default): active feature work  
++- **TEST**: integration/QA  
++- **PRODUCTION**: stable releases  
+
++## Contributing
++1. Fork & clone  
++2. `git checkout -b feature/<name>`  
++3. `git commit -am "Add <feature>" && git push origin feature/<name>`  
++4. Open PR against **DEVELOPMENT**
+
++## License
++MIT
