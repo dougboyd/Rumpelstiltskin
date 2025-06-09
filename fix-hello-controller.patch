@@ -1,0 +1,45 @@
+diff --git a/pom.xml b/pom.xml
+index a70c702..b123456 100644
+--- a/pom.xml
++++ b/pom.xml
+@@ <build>
+-    <plugins>
+-      <plugin>
+-        <groupId>org.springframework.boot</groupId>
+-        <artifactId>spring-boot-maven-plugin</artifactId>
+-      </plugin>
+-    </plugins>
++    <plugins>
++      <!-- Spring Boot repackage (builds executable JAR with deps) -->
++      <plugin>
++        <groupId>org.springframework.boot</groupId>
++        <artifactId>spring-boot-maven-plugin</artifactId>
++      </plugin>
++
++      <!-- Maven Shade Plugin for an explicit “fat JAR” -->
++      <plugin>
++        <groupId>org.apache.maven.plugins</groupId>
++        <artifactId>maven-shade-plugin</artifactId>
++        <version>3.4.1</version>
++        <executions>
++          <execution>
++            <phase>package</phase>
++            <goals>
++              <goal>shade</goal>
++            </goals>
++            <configuration>
++              <!-- attach the shaded JAR as the primary artifact -->
++              <shadedArtifactAttached>false</shadedArtifactAttached>
++              <!-- ensure no “-shaded” classifier; will overwrite target/*.jar -->
++              <createDependencyReducedPom>false</createDependencyReducedPom>
++              <transformers>
++                <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
++                  <!-- your main class -->
++                  <mainClass>au.com.dougboyd.rumpelstiltskin.RumpelstiltskinApplication</mainClass>
++                </transformer>
++              </transformers>
++            </configuration>
++          </execution>
++        </executions>
++      </plugin>
++    </plugins>
