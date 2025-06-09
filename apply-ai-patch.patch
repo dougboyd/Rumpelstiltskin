@@ -1,0 +1,100 @@
+diff --git a/src/main/resources/application.properties b/src/main/resources/application.properties
+index e69de29..abcd123 100644
+--- a/src/main/resources/application.properties
++++ b/src/main/resources/application.properties
+@@ -1,2 +1,3 @@
+ server.port=8080
++root.directory=/Users/dougboyd/work/Rumpelstiltskin
+
+diff --git a/src/main/java/au/com/dougboyd/rumpelstiltskin/config/OpenAIConfig.java b/src/main/java/au/com/dougboyd/rumpelstiltskin/config/OpenAIConfig.java
+new file mode 100644
+index 0000000..1111111
+--- /dev/null
++++ b/src/main/java/au/com/dougboyd/rumpelstiltskin/config/OpenAIConfig.java
+@@ -0,0 +1,15 @@
++package au.com.dougboyd.rumpelstiltskin.config;
++
++import com.openai.client.OpenAIClient;
++import com.openai.client.okhttp.OpenAIOkHttpClient;
++import org.springframework.context.annotation.Bean;
++import org.springframework.context.annotation.Configuration;
++
++@Configuration
++public class OpenAIConfig {
++
++    @Bean
++    public OpenAIClient openAIClient() {
++        return OpenAIOkHttpClient.fromEnv();
++    }
++}
+
+diff --git a/src/main/java/au/com/dougboyd/rumpelstiltskin/controller/HelloController.java b/src/main/java/au/com/dougboyd/rumpelstiltskin/controller/HelloController.java
+index 789abcd..abcdef0 100644
+--- a/src/main/java/au/com/dougboyd/rumpelstiltskin/controller/HelloController.java
++++ b/src/main/java/au/com/dougboyd/rumpelstiltskin/controller/HelloController.java
+@@ -1,6 +1,20 @@
+ package au.com.dougboyd.rumpelstiltskin.controller;
++
++import org.springframework.beans.factory.annotation.Value;
++import org.springframework.web.bind.annotation.GetMapping;
++import org.springframework.web.bind.annotation.PostMapping;
++import org.springframework.web.bind.annotation.RequestMapping;
++import org.springframework.web.bind.annotation.RequestParam;
++import org.springframework.web.bind.annotation.RestController;
++
++import com.openai.client.OpenAIClient;
++import com.openai.models.responses.Response;
++import com.openai.models.responses.ResponseCreateParams;
++import com.openai.models.ChatModel;
++import java.io.File;
++import java.io.IOException;
++import java.nio.charset.StandardCharsets;
++import java.nio.file.Files;
++import java.nio.file.Path;
++import java.nio.file.Paths;
++import java.nio.file.StandardOpenOption;
+
+ @RestController
+ @RequestMapping("/api")
+@@ -8,8 +22,17 @@ public class HelloController {
+     private final OpenAIClient openAIClient;
+
++    @Value("${root.directory}")
++    private String rootDirectory;
++
+     public HelloController(OpenAIClient openAIClient) {
+         this.openAIClient = openAIClient;
+     }
++
+     @GetMapping("/hello")
+     public String sayHello() {
+         return "Hello, Rumpelstiltskin!";
+     }
++
++    @PostMapping("/generate-code-directly")
++    public String generateCodeDirectly(@RequestParam String inputRequest) throws IOException, InterruptedException {
++        // 1) Send prompt to ChatGPT
++        ResponseCreateParams params = ResponseCreateParams.builder()
++            .model(ChatModel.GPT_3_5_TURBO)
++            .input(inputRequest)
++            .build();
++        Response aiResponse = openAIClient.responses().create(params);
++        String diff = aiResponse.choices().get(0).message().content();
++
++        // 2) Write patch to disk
++        Path patchFile = Paths.get(rootDirectory, "changes.patch");
++        Files.writeString(patchFile, diff, StandardCharsets.UTF_8,
++            StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING);
++
++        // 3) Apply it via the system patch tool
++        ProcessBuilder pb = new ProcessBuilder("patch", "-p1", "-i", patchFile.toString());
++        pb.directory(new File(rootDirectory));
++        Process proc = pb.start();
++        int code = proc.waitFor();
++        if (code != 0) {
++            String err = new String(proc.getErrorStream().readAllBytes(), StandardCharsets.UTF_8);
++            return "Patch failed:\n" + err;
++        }
++        return "Patch applied successfully:\n" + diff;
++    }
+ }
