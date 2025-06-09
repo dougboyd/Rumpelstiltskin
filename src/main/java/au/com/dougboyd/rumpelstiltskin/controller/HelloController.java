@@ -18,3 +18,4 @@ public class HelloController {
     public String sayHello() {
         return "Hello, Rumpelstiltskin!";
     }
+}
